@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
 import localFont from "next/font/local";
+import styled from "styled-components";
 
 const rivanna = localFont({
   src: "../../../public/fonts/RivannaNF.woff2",
@@ -39,12 +40,16 @@ export default function Navbar() {
           {/* Logo */}
           <div className="leading-tight mb-48">
             <Link href="/">
-              <span className={`text-8xl text-[#546A51] ${rivanna.className}`}>
+              <span
+                className={` text-center text-8xl text-[#546A51] ${rivanna.className}`}
+              >
                 HAMUR
               </span>
               <br />{" "}
-              <span className={`text-xl text-black ${montserrat.className}`}>
-                artspace
+              <span
+                className={` text-center text-[44px] text-black ${montserrat.className}`}
+              >
+                art space
               </span>
             </Link>
           </div>
@@ -88,14 +93,7 @@ export default function Navbar() {
         ) : (
           <div className="fixed inset-0 top-4 bg-[#F6E2BFFF] flex flex-col justify-between p-6 z-50">
             {/* Close Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-[#546A51]"
-              >
-                <FiX size={28} />
-              </button>
-            </div>
+            <div className="flex justify-end"></div>
 
             {/* Logo & Menu */}
             <div>
