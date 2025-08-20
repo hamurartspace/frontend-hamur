@@ -97,14 +97,19 @@ export default function Navbar() {
 
             {/* Logo & Menu */}
             <div>
-              <div className="leading-tight mb-12 text-center">
+              <div className="leading-tight mb-8 text-center">
                 <Link href="/" className={``} onClick={() => setIsOpen(false)}>
                   <span
-                    className={`text-8xl text-[#546A51] ${rivanna.className}`}
+                    className={` text-center text-8xl text-[#546A51] ${rivanna.className}`}
                   >
                     HAMUR
                   </span>
-                  <br /> <span className="text-2xl text-black">artspace</span>
+                  <br />{" "}
+                  <span
+                    className={` text-center text-[44px] text-black ${montserrat.className}`}
+                  >
+                    art space
+                  </span>
                 </Link>
               </div>
               <nav className="space-y-6 text-center text-2xl text-black">
