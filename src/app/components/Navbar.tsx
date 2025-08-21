@@ -71,9 +71,13 @@ export default function Navbar() {
         {/* Footer */}
         <div className="space-y-4 text-black">
           <div className="flex space-x-3 text-xl">
-            <a href="#">
+            <Link
+              href="https://www.instagram.com/hamurartspace/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaInstagram />
-            </a>
+            </Link>
           </div>
           <div className={`text-sm ${montserrat.className}`}>
             <h2>Jl. Cisadane No.11A, Malang</h2>
@@ -129,9 +133,13 @@ export default function Navbar() {
             {/* Footer */}
             <div className="space-y-4 text-center pt-8">
               <div className="flex justify-center space-x-4 text-xl text-[#546A51]">
-                <a href="#">
+                <Link
+                  href="https://www.instagram.com/hamurartspace/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <FaInstagram />
-                </a>
+                </Link>
               </div>
               <div className="text-sm text-[#546A51]">
                 <h2>Jl. Cisadane No.11A, Malang</h2>
