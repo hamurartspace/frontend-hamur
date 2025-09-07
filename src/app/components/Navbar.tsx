@@ -26,6 +26,7 @@ export default function Navbar() {
     { name: "HOME", path: "/" },
     { name: "ABOUT US", path: "/about" },
     { name: "EXHIBITION", path: "/exhibition" },
+    { name: "COURSES", path: "/courses" },
     { name: "PROGRAM", path: "/program" },
     { name: "PROJECT", path: "/project" },
     { name: "ARCHIVE", path: "/archive" },
@@ -35,7 +36,7 @@ export default function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <aside className="hidden md:flex w-64 h-screen bg-[#F6E2BFFF] flex-col justify-between p-6 border-l border-[#546A51]/70 fixed right-0 top-0 z-50">
+      <aside className="hidden md:flex w-81 h-screen bg-[#F6E2BFFF] flex-col justify-between p-6 border-l border-[#546A51]/70 fixed right-0 top-0 z-50">
         <div>
           {/* Logo */}
           <div className="leading-tight mb-48">
@@ -90,12 +91,12 @@ export default function Navbar() {
         {!isOpen ? (
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-[#F6E2BFFF] p-2 rounded text-[#546A51]"
+            className="bg-[#F6E2BFFF] p-2 rounded-full font-bold text-[#546A51]"
           >
             <FiMenu size={24} />
           </button>
         ) : (
-          <div className="fixed inset-0 top-4 bg-[#F6E2BFFF] flex flex-col justify-between p-6 z-50">
+          <div className="fixed inset-0 top-0 bg-[#F6E2BFFF] flex flex-col justify-between p-6 z-50">
             {/* Close Button */}
             <div className="flex justify-end"></div>
 

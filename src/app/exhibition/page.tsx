@@ -1,31 +1,83 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import localFont from "next/font/local";
+import { useRouter } from "next/navigation";
 
+// Font
 const montserrat = localFont({
   src: "../../../public/fonts/Montserrat-Regular.woff2",
 });
 
+// Types
+type StatusEvent = "current" | "upcoming" | "archived";
+
 interface Exhibition {
   id: number;
   title: string;
-  startDate: string;
-  endDate: string;
-  statusEvent: "current" | "upcoming";
-  image?: {
-    url: string;
-  };
+  slug: string;
+  startDate: string; // ISO date
+  endDate: string; // ISO date
+  statusEvent: StatusEvent;
+  description?: string;
+  coverImage?: { url: string };
+}
+
+// Utils (file-Scoped)
+function mapExhibitions(json: any): Exhibition[] {
+  const rows = json?.data ?? [];
+  return rows.map((item: any) => {
+    const attrs = item?.attributes ?? item ?? {};
+    const statusRaw = String(attrs?.statusEvent ?? item?.statusEvent ?? "")
+      .toLowerCase()
+      .trim();
+
+    const statusEvent: StatusEvent =
+      statusRaw === "current" ||
+      statusRaw === "upcoming" ||
+      statusRaw === "archived"
+        ? (statusRaw as StatusEvent)
+        : "current";
+
+    const cover =
+      attrs?.coverImage?.data?.attributes?.url ??
+      attrs?.coverImage?.url ??
+      undefined;
+
+    return {
+      id: item?.id,
+      title: attrs?.title ?? item?.title ?? "Untitled",
+      slug: attrs?.slug ?? item?.slug ?? "",
+      startDate: attrs?.startDate ?? item?.startDate ?? "",
+      endDate: attrs?.endDate ?? item?.endDate ?? "",
+      statusEvent,
+      description: attrs?.description ?? item?.description ?? "",
+      coverImage: cover ? { url: cover } : undefined,
+    };
+  });
+}
+
+function resolveImageUrl(url?: string) {
+  if (!url) return undefined;
+  if (url.startsWith("http")) return url;
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "";
+  return `${baseUrl.replace(/\/+$/, "")}${url}`;
 }
 
 export default function ExhibitionPage() {
   const [activeTab, setActiveTab] = useState<"current" | "upcoming">("current");
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
+  const [items, setItems] = useState<Exhibition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Atur jika mau auto-refresh tanpa reload (ms). Set 0 untuk mematikan.
+  const REFRESH_MS = 0;
 
   useEffect(() => {
+    let alive = true;
+
     async function fetchExhibitions() {
       try {
         setLoading(true);
@@ -34,68 +86,81 @@ export default function ExhibitionPage() {
         const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
         if (!baseUrl) {
           throw new Error(
-            "ENV NEXT_PUBLIC_STRAPI_URL belum diset. Tambahkan di .env.local, mis: NEXT_PUBLIC_STRAPI_URL=https://stunning-dream-45c19f9694.strapiapp.com/"
+            "ENV NEXT_PUBLIC_STRAPI_URL belum diset. Tambahkan di .env.local"
           );
         }
 
-        // populate tidak berpengaruh pada format kamu (sudah flat), tapi tidak masalah untuk dibiarkan
         const url = `${baseUrl.replace(
           /\/+$/,
           ""
-        )}/api/exhibitions?populate=image`;
+        )}/api/collection-exhibitions?populate=coverImage`;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
 
-        const data = await res.json();
-        // console.log("RAW:", JSON.stringify(data, null, 2)); // debug
-
-        const formatted: Exhibition[] = (data?.data ?? []).map((item: any) => {
-          const status = String(item?.statusEvent ?? "")
-            .toLowerCase()
-            .trim();
-          // Image sudah absolute url dari Cloudinary
-          const imgUrl = item?.image?.url ?? undefined;
-
-          return {
-            id: item?.id,
-            title: item?.title ?? "Untitled",
-            startDate: item?.startDate ?? "",
-            endDate: item?.endDate ?? "",
-            statusEvent:
-              status === "current" || status === "upcoming"
-                ? (status as "current" | "upcoming")
-                : "current",
-            image: imgUrl ? { url: imgUrl } : undefined,
-          };
-        });
-
-        setExhibitions(formatted);
+        const json = await res.json();
+        const formatted = mapExhibitions(json);
+        if (alive) setItems(formatted);
       } catch (err: any) {
-        console.error("Failed to fetch exhibitions", err);
-        setError(err?.message || "Terjadi kesalahan saat mengambil data");
+        if (alive)
+          setError(err?.message || "Terjadi kesalahan saat mengambil data");
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     }
 
     fetchExhibitions();
+
+    let interval: number | undefined;
+    if (REFRESH_MS && REFRESH_MS > 0) {
+      interval = window.setInterval(fetchExhibitions, REFRESH_MS);
+    }
+    return () => {
+      alive = false;
+      if (interval !== undefined) clearInterval(interval);
+    };
   }, []);
 
   const today = new Date();
-  const filteredExhibitions = exhibitions.filter((ex) => {
-    if (activeTab === "current") {
-      if (ex.statusEvent !== "current") return false;
+
+  const filtered = useMemo(() => {
+    return items.filter((ex) => {
+      const startDate = new Date(ex.startDate);
       const endDate = new Date(ex.endDate);
-      return endDate >= today;
-    } else if (activeTab === "upcoming") {
-      return ex.statusEvent === "upcoming";
-    }
-    return false;
-  });
+
+      // Sembunyikan archived dari halaman ini
+      if (ex.statusEvent === "archived") return false;
+
+      // Fallback archive: jika endDate telah lewat, jangan tampilkan
+      if (today > endDate) return false;
+
+      if (activeTab === "current") {
+        // Utamakan status current
+        if (ex.statusEvent === "current" && today <= endDate) return true;
+
+        // Fallback: upcoming yang rentangnya sudah dimulai
+        if (
+          ex.statusEvent === "upcoming" &&
+          today >= startDate &&
+          today <= endDate
+        )
+          return true;
+
+        return false;
+      }
+
+      if (activeTab === "upcoming") {
+        // Upcoming yang belum mulai
+        if (ex.statusEvent === "upcoming" && today < startDate) return true;
+        return false;
+      }
+
+      return false;
+    });
+  }, [items, activeTab]);
 
   return (
     <section className="bg-[#F6E2BFFF] min-h-screen">
-      <div className="p-8 md:pl-16 md:mr-64 max-w-8xl">
+      <div className="p-8 md:pl-16 md:mr-81 max-w-8xl">
         <h1
           className={`sm:text-7xl text-4xl mb-6 ${montserrat.className} tracking-tighter text-[#546A51]`}
         >
@@ -134,38 +199,46 @@ export default function ExhibitionPage() {
           </div>
         )}
 
-        {/* Exhibition Grid */}
+        {/* Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-1 gap-6">
-            {filteredExhibitions.length === 0 ? (
-              <p>Tidak ada {activeTab} exhibitions.</p>
+            {filtered.length === 0 ? (
+              <p>
+                {activeTab === "current"
+                  ? "Sedang tidak ada exhibition yang berlangsung."
+                  : "Tidak ada upcoming exhibitions."}
+              </p>
             ) : (
-              filteredExhibitions.map((exhibition) => (
-                <div
-                  key={exhibition.id}
-                  className="border-none rounded-lg overflow-hidden shadow-xl bg-white text-black hover:shadow-lg transition-shadow duration-300"
-                >
-                  {exhibition.image ? (
-                    <Image
-                      src={exhibition.image.url}
-                      alt={exhibition.title}
-                      width={800}
-                      height={400}
-                      className="w-full h-64 object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-gray-200" />
-                  )}
-                  <div className="p-4">
-                    <h2 className="text-2xl font-semibold mb-2">
-                      {exhibition.title}
-                    </h2>
-                    <p className="text-black">
-                      {exhibition.startDate} hingga {exhibition.endDate}
-                    </p>
+              filtered.map((ex) => {
+                const img = resolveImageUrl(ex.coverImage?.url);
+                return (
+                  <div
+                    key={ex.id}
+                    onClick={() => router.push(`/exhibition/${ex.slug}`)}
+                    className="cursor-pointer border-none rounded-lg overflow-hidden shadow-xl bg-white text-black hover:shadow-lg transition-shadow duration-300"
+                  >
+                    {img ? (
+                      <Image
+                        src={img}
+                        alt={ex.title}
+                        width={800}
+                        height={400}
+                        className="w-full h-64 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-64 bg-gray-200" />
+                    )}
+                    <div className="p-4">
+                      <h2 className="text-2xl font-semibold mb-2">
+                        {ex.title}
+                      </h2>
+                      <p className="text-black">
+                        {ex.startDate} hingga {ex.endDate}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}

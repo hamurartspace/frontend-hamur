@@ -171,7 +171,7 @@ export default function ProjectPage() {
 
   return (
     <section className="bg-[#F6E2BFFF] min-h-screen">
-      <div className="p-8 md:pl-16 md:mr-64 max-w-8xl">
+      <div className="p-8 md:pl-16 md:mr-81 max-w-8xl">
         <h2
           className={`sm:text-7xl text-4xl tracking-tighter mb-4 text-[#546A51] pb-12 ${montserrat.className}`}
         >

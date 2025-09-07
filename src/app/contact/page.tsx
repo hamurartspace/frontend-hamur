@@ -7,14 +7,14 @@ const montserrat = localFont({
 
 export default function ContactPage() {
   return (
-    <main className="flex min-h-screen bg-[#F6E2BFFF] md:mr-64 max-w-8xl">
+    <main className="flex min-h-screen bg-[#F6E2BFFF] md:mr-81 max-w-8xl">
       <div className="w-full flex flex-col md:flex-row p-8 md:pb-4 md:pl-16">
         {/* Info Kontak di kiri */}
         <div className="md:w-1/2 md:pr-12 flex flex-col justify-start">
           <h1
             className={`${montserrat.className} tracking-tighter sm:text-7xl text-4xl md:text-7xl text-[#546A51] pb-32`}
           >
-            CONTACT US
+            Contact Us
           </h1>
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-[#546A51]">
             GET IN TOUCH WITH HAMUR ARTSPACE

@@ -12,34 +12,29 @@ const montserrat = localFont({
 
 export default function HeroSection() {
   return (
-    <main className="flex-1 flex bg-[#F6E2BFFF] md:mr-64 min-h-screen">
-      {/* Gambar kiri */}
-      <div className="hidden md:block md:w-1/3 relative">
-        <Image
-          src="/pic5.jpg"
-          alt="Gambar"
-          className="w-full h-[100vh] object-cover opacity-100"
-          fill
-        />
-      </div>
+    <main className="flex-1 flex md:mr-81 min-h-screen relative">
+      {/* Background image layer */}
+      <div className="absolute inset-0 h-full min-h-screen bg-[url('/pic5.jpg')] bg-cover bg-center z-0" />
 
+      {/* Blur overlay */}
+      <div className="absolute inset-0 h-full min-h-screen bg-black/30 backdrop-blur-md z-10" />
       {/* Bagian teks kanan */}
-      <div className="w-full md:w-2/3 flex flex-col justify-center p-6 md:p-12 text-left md:text-right bg-[#F6E2BFFF]">
+      <div className="w-full md:w-full flex flex-col justify-center p-6 md:p-12 text-left md:text-right relative z-20">
         <q
-          className={`text-7xl font-bold leading-tight mb-3 text-[#546A51] sm:pt-0 pt-24 italic ${fiveyearsold.className}`}
+          className={`text-6xl md:text-[110px] font-bold leading-tight mb-3 text-[#ffffff] sm:pt-0 pt-24 italic ${fiveyearsold.className}`}
         >
           An Empty Canvas Is Full
         </q>
         <p
-          className={`text-xl md:text-2xl mb-4 text-black ${montserrat.className}`}
+          className={`text-xl md:text-2xl mb-4 text-white ${montserrat.className}`}
         >
           - Robert Rauschenberg
         </p>
         <Link
-          href="/project"
-          className="bg-[#546A51] hover:bg-[#303d2f] px-6 py-3 rounded font-semibold text-white text-center"
+          href="/exhibition"
+          className="bg-[#000000] hover:bg-[#303d2f] px-6 py-3 rounded font-semibold text-white w-fit mx-auto md:mx-0 self-end mt-8"
         >
-          SEE OUR PROJECTS
+          SEE OUR EXHIBITIONS
         </Link>
       </div>
     </main>

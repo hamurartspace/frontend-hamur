@@ -16,9 +16,9 @@ const montserrat = localFont({
 });
 
 interface AboutData {
-  judulAbout: string;
+  moto: string;
   isiAbout: string;
-  imageAbout?: { url: string };
+  mediaImage?: { url: string; alternativeText?: string };
 }
 
 export default function AboutPage() {
@@ -27,8 +27,8 @@ export default function AboutPage() {
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl =
-  process.env.NEXT_PUBLIC_STRAPI_URL || 
-  "https://stunning-dream-45c19f9694.strapiapp.com/";
+    process.env.NEXT_PUBLIC_STRAPI_URL ||
+    "https://stunning-dream-45c19f9694.strapiapp.com/";
 
   const [requestUrl, setRequestUrl] = useState("");
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function AboutPage() {
         const url = `${baseUrl.replace(
           /\/+$/,
           ""
-        )}/api/abouts?populate=imageAbout`;
+        )}/api/about-pages?populate=mediaImage`;
         setRequestUrl(url);
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) {
@@ -49,25 +49,18 @@ export default function AboutPage() {
 
         const json = await res.json();
         const raw = json?.data?.[0];
-        if (!raw) {
-          setAbout(null);
-          setError("Data about tidak ditemukan.");
-          return;
-        }
-
         const attrs = raw?.attributes ?? raw ?? {};
-        const imgUrl: string | undefined =
-          attrs?.imageAbout?.data?.attributes?.url ??
-          attrs?.imageAbout?.url ??
-          (Array.isArray(attrs?.imageAbout)
-            ? attrs?.imageAbout?.[0]?.url
-            : undefined) ??
-          undefined;
+        const imgData =
+          attrs?.mediaImage?.data?.attributes ?? attrs?.mediaImage;
+        const imgUrl: string | undefined = imgData?.url;
+        const altText: string | undefined = imgData?.alternativeText ?? "";
 
         setAbout({
-          judulAbout: attrs?.judulAbout ?? attrs?.title ?? "",
-          isiAbout: attrs?.isiAbout ?? attrs?.content ?? "",
-          imageAbout: imgUrl ? { url: imgUrl } : undefined,
+          moto: attrs?.moto ?? "",
+          isiAbout: attrs?.isiAbout ?? "",
+          mediaImage: imgUrl
+            ? { url: imgUrl, alternativeText: altText }
+            : undefined,
         });
       } catch (err: any) {
         console.error("Error fetching about:", err);
@@ -81,10 +74,10 @@ export default function AboutPage() {
   }, [baseUrl]);
 
   const imageSrc = useMemo(() => {
-    if (!about?.imageAbout?.url) return null;
-    return about.imageAbout.url.startsWith("http")
-      ? about.imageAbout.url
-      : `${baseUrl}${about.imageAbout.url}`;
+    if (!about?.mediaImage?.url) return null;
+    return about.mediaImage.url.startsWith("http")
+      ? about.mediaImage.url
+      : `${baseUrl}${about.mediaImage.url}`;
   }, [about, baseUrl]);
 
   return (
@@ -93,7 +86,7 @@ export default function AboutPage() {
         <h1
           className={`sm:text-7xl text-4xl tracking-tighter mb-4 text-[#546A51] ${montserrat.className}`}
         >
-          ABOUT US
+          About Us
         </h1>
 
         {loading && <p>Sedang memuat data...</p>}
@@ -110,9 +103,9 @@ export default function AboutPage() {
 
         {!loading && !error && about && (
           <>
-            {about.judulAbout && (
+            {about.moto && (
               <h2 className="text-2xl md:text-3xl mb-6 font-bold text-black">
-                {about.judulAbout}
+                {about.moto}
               </h2>
             )}
 
@@ -126,7 +119,11 @@ export default function AboutPage() {
               <div className="w-full mt-8">
                 <Image
                   src={imageSrc}
-                  alt={about.judulAbout || "About image"}
+                  alt={
+                    about.mediaImage?.alternativeText ||
+                    about.moto ||
+                    "About image"
+                  }
                   width={1200}
                   height={600}
                   className="w-full h-auto object-cover rounded-lg shadow-lg"
@@ -135,7 +132,7 @@ export default function AboutPage() {
               </div>
             )}
 
-            {!about.judulAbout && !about.isiAbout && !imageSrc && (
+            {!about.moto && !about.isiAbout && !imageSrc && (
               <p className="text-gray-600">Konten About belum tersedia.</p>
             )}
           </>

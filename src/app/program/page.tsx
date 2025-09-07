@@ -58,7 +58,14 @@ export default function ProgramPage() {
             mediaProgram: imgUrl ? { url: imgUrl } : undefined,
           };
         });
-        setPrograms(formatted);
+
+        // Filter program yang belum kadaluarsa
+        const today = new Date();
+        const notExpired = formatted.filter(
+          (program) => new Date(program.end) >= today
+        );
+
+        setPrograms(notExpired);
       } catch (err: any) {
         setError(err?.message || "Terjadi kesalahan saat mengambil data");
       } finally {
@@ -74,7 +81,7 @@ export default function ProgramPage() {
 
   return (
     <section className="bg-[#F6E2BFFF] min-h-screen">
-      <div className="p-8 md:pl-16 md:mr-64 max-w-8xl">
+      <div className="p-8 md:pl-16 md:mr-81 max-w-8xl">
         <h1
           className={`sm:text-7xl text-4xl mb-6 ${montserrat.className} tracking-tighter text-[#546A51]`}
         >
