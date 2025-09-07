@@ -29,14 +29,17 @@ function isRegistrationClosed(schedule: string) {
 export default async function CourseDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
+
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
   if (!baseUrl) throw new Error("NEXT_PUBLIC_STRAPI_URL belum diset");
 
-  const url = `${baseUrl.replace(/\/+$/, "")}/api/courses?filters[slug][$eq]=${
-    params.slug
-  }&populate=image`;
+  const url = `${baseUrl.replace(
+    /\/+$/,
+    ""
+  )}/api/courses?filters[slug][$eq]=${slug}&populate=image`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Gagal fetch course: ${res.status}`);
 
