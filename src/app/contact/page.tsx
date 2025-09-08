@@ -12,7 +12,7 @@ export default function ContactPage() {
         {/* Info Kontak di kiri */}
         <div className="md:w-1/2 md:pr-12 flex flex-col justify-start">
           <h1
-            className={`${montserrat.className} tracking-tighter sm:text-7xl text-4xl md:text-7xl text-[#546A51] pb-32`}
+            className={`${montserrat.className} tracking-tighter sm:text-7xl text-4xl md:text-7xl text-[#546A51] pb-12`}
           >
             Contact Us
           </h1>

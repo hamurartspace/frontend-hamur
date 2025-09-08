@@ -27,8 +27,7 @@ export default function AboutPage() {
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_STRAPI_URL ||
-    "https://stunning-dream-45c19f9694.strapiapp.com/";
+    process.env.NEXT_PUBLIC_STRAPI_URL || "https://backend-hamur.onrender.com";
 
   const [requestUrl, setRequestUrl] = useState("");
   useEffect(() => {

@@ -105,7 +105,7 @@ export default function Navbar() {
               <div className="leading-tight mb-8 text-center">
                 <Link href="/" className={``} onClick={() => setIsOpen(false)}>
                   <span
-                    className={` text-center text-8xl text-[#546A51] ${rivanna.className}`}
+                    className={` text-center ml-1 text-8xl text-[#546A51] ${rivanna.className}`}
                   >
                     HAMUR
                   </span>
