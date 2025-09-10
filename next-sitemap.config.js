@@ -6,7 +6,4 @@ module.exports = {
   priority: 0.7,
   sitemapSize: 5000,
   exclude: ["/admin", "/private"],
-  robotsTxtOptions: {
-    additionalSitemaps: ["https://hamurartspace.com/sitemap.xml"],
-  },
 };
