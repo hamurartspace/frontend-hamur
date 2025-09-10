@@ -1,12 +1,12 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://yourdomain.com", // Ganti dengan domain kamu
+  siteUrl: "https://hamurartspace.com",
   generateRobotsTxt: true,
   changefreq: "weekly",
   priority: 0.7,
   sitemapSize: 5000,
   exclude: ["/admin", "/private"],
   robotsTxtOptions: {
-    additionalSitemaps: ["https://yourdomain.com/sitemap.xml"],
+    additionalSitemaps: ["https://hamurartspace.com/sitemap.xml"],
   },
 };
