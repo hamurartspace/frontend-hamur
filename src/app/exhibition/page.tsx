@@ -233,7 +233,7 @@ export default function ExhibitionPage() {
                         {ex.title}
                       </h2>
                       <p className="text-black">
-                        {ex.startDate} hingga {ex.endDate}
+                        {ex.startDate} - {ex.endDate}
                       </p>
                     </div>
                   </div>

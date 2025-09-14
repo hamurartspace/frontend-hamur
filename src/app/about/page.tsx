@@ -115,7 +115,7 @@ export default function AboutPage() {
             )}
 
             {imageSrc && (
-              <div className="w-full mt-8">
+              <div className="w-full mt-8 flex">
                 <Image
                   src={imageSrc}
                   alt={
@@ -123,9 +123,10 @@ export default function AboutPage() {
                     about.moto ||
                     "About image"
                   }
-                  width={1200}
-                  height={600}
-                  className="w-full h-auto object-cover rounded-lg shadow-lg"
+                  width={400} // atur lebih kecil dari original (misalnya 600px)
+                  height={0} // auto, karena kita tambahkan style
+                  style={{ height: "auto" }}
+                  className="rounded-lg shadow-lg"
                   priority
                 />
               </div>
