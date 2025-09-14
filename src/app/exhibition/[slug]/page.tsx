@@ -20,7 +20,7 @@ function ArtworkModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-lg w-[98vw] max-w-2xl md:max-w-4xl lg:max-w-6xl p-4 md:p-8 relative max-h-[90vh] overflow-y-auto flex flex-col"
+        className="bg-white rounded-xl shadow-lg w-[92vw] max-w-lg md:max-w-2xl lg:max-w-3xl p-4 md:p-8 relative max-h-[85vh] overflow-y-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -78,8 +78,8 @@ export default function ExhibitionDetailPage({
       const url = `${baseUrl}/api/collection-exhibitions?filters[slug][$eq]=${slug}&populate=artwork_exhibitions.image`;
       const res = await fetch(url, { cache: "no-store" });
       const data = await res.json();
-      console.log("API Response:", data); // Tetap log untuk debug
-      const item = data?.data?.[0]; // <-- Perbaikan di sini
+      console.log("API Response:", data);
+      const item = data?.data?.[0];
       if (!item) return;
       setExhibition(item);
       setArtworks(item.artwork_exhibitions ?? []);
