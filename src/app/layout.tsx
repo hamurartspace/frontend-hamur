@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   title: "Hamur Artspace",
   description:
     "Hamur Artspace: Contemporary art gallery, exhibitions, programs, and artist residency in Malang.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
