@@ -90,7 +90,7 @@ export default function ExhibitionDetailPage({
   if (!exhibition)
     return (
       <section className="bg-[#F6E2BFFF] min-h-screen flex items-center justify-center">
-        <div className="text-[#546A51] text-xl">Exhibition tidak ditemukan</div>
+        <div className="text-black text-xl">Exhibition tidak ditemukan</div>
       </section>
     );
 
@@ -98,26 +98,26 @@ export default function ExhibitionDetailPage({
     <section className="bg-[#F6E2BFFF] min-h-screen">
       <div className="p-8 md:pl-16 md:mr-81 max-w-9xl flex flex-col">
         {/* Title & Description */}
-        <h2 className="sm:text-5xl text-3xl tracking-tighter mb-4 text-[#546A51] pb-4 font-bold">
+        <h2 className="sm:text-5xl text-3xl tracking-wide mb-4 text-[#546A51] pb-4 font-bold">
           {exhibition.title}
         </h2>
         <div className="mb-4">
           <BackButton />
         </div>
-        <p className="mb-8 text-[#546A51] whitespace-pre-line">
+        <p className="mb-8 text-black whitespace-pre-line">
           {exhibition.description}
         </p>
         {/* Grid Artwork */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {artworks.length === 0 && (
-            <div className="col-span-full text-[#546A51] text-lg">
+            <div className="col-span-full text-black text-lg">
               Tidak ada karya pada pameran ini.
             </div>
           )}
           {artworks.map((art: any) => (
             <div
               key={art.id}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer p-4 flex flex-col"
+              className="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer p-4 flex flex-col h-[360px]" // fixed height
               onClick={() => setSelectedArtwork(art)}
             >
               <img
@@ -125,10 +125,12 @@ export default function ExhibitionDetailPage({
                 alt={art.title}
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
-              <h3 className="text-xl font-semibold mb-1 text-[#546A51]">
+              <h3 className="text-lg font-semibold mb-1 text-black line-clamp-2">
                 {art.title}
               </h3>
-              <p className="text-[#546A51]">{art.artistName}</p>
+              <p className="text-black line-clamp-1">{art.artistName}</p>
+              <div className="mt-auto" />{" "}
+              {/* supaya title/artist tetap di atas, ada space kosong di bawah */}
             </div>
           ))}
         </div>
